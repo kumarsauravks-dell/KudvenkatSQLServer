@@ -1,0 +1,61 @@
+#7. Identity Column in Sql Server.
+    - What is identity column.
+    - Creating an Identity column.
+    - Supply explicit values for identity columns using IDENTITY_INSERT 
+    - Reset identity values using DBCC CHECKIDENT command.
+
+#8. Retrieving identity column values.
+    - Get last generated identity column values.
+    - Difference between SCOPE_IDENTITY(). @@Identity and IDENT_CURRENT('TableName')
+    
+#9. Unique key constraint
+    - What is unique key constraint.
+    - When do you use unique key constraint over primary key.
+    - Difference b/n unique and primary key constraint.
+
+#10. All About "select"
+    - specific column or all columns
+    - distinct rows
+    - filtering with where clause
+    - wild cards in Sql
+    - joining multiple constraints using AND and OR operators
+    - sorting rows using order by
+    - selecting top n or top n percentage of rows
+
+#11. Group by
+    - Grouping rows using Group by
+    - Filtering Groups
+    - Difference between WHERE and HAVING 
+
+#12. Joins
+    - Different types of Joins
+    - Cross Join
+    - Inner Join
+    - Outer Join - Left , Right and Full Outer Join.
+
+#13. Advanced Joins
+    - Advanced or intelligent Joins
+    - Retrieve only the non matching rows from left table
+    - Retrieve only the non matching rows from right table
+    - Retrieve only the non matching rows from both the tables.
+
+#14. Self Join
+    - Joining a table with itself - Self Join
+    - Self join can be classified as
+        - Inner Self Join
+        - Outer Self Join (Left,Right,Full)
+        - Cross Self Join
+
+#15. Different ways to replace NULL in Sql 
+    - ISNULL() function
+    - Case statement
+    - COALESCE() function
+
+#16. COALESCE() function
+    - COALESCE() function example
+
+
+
+
+
+

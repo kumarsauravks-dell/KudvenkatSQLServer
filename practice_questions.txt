@@ -1,0 +1,121 @@
+Q1. Create two tables tblPerson and tblGender where make one primary key in both.
+    tblPerson should have columns like Id,Name,Email,GenderId -> graphically
+    tblGender should have columns like Id,Gender -> using query
+
+Q2. Make the GenderId column of tblPerson foreign key -> both graphically and by using query.
+
+Q3. Enter 3 records in both the tables using designer.
+
+Q4. Insert a record in tblPerson without providing a GenderId
+    Create a default constraint so that instead of inserting a null value in GenderId column it should insert a default value of 3 in tblPerson table.
+    Again insert a record to check if it is working.
+    Insert a record in tblPerson by providing a GenderId this time as null.
+
+Q5. Create a table tblPerson1 with column PId and Name, set PId as Identity column .
+    Using both designer and query.
+
+Q6. Create two tables Test1 and Test2 with two fields Id,Value with Id as identity column.
+    insert one value in Test1 table.
+    create a trigger trForInsert which insert a new record to Test2 just after we insert a value to Test1.
+    check SCOPE_IDENTITY() and @@IDENTITY for the difference.
+
+Q7. Create a table tblEmp1 with fields Id,Name,Email,Phone 
+    Make Email as unique key using the designer
+    Make Phone as unique key using query
+    delete the unique key for phone.
+
+Q8. Select an Employee from tblEmp whose age is the heighest among all the other employees.
+
+Q9. Create a table tblEmp2 with data as
+    1	Tom                 	Male      	4000	London              
+    2	Pam                 	Female    	3000	New York            
+    3	John                	Male      	3500	London              
+    4	Sam                 	Male      	4500	London              
+    5	Todd                	Male      	2800	Sydney              
+    6	Ben                 	Male      	7000	New  York           
+    7	Sara                	Female    	4800	Sydney              
+    8	Valarie             	Female    	5500	New York            
+    9	James               	Male      	6500	London              
+    10	Russel              	Male      	8800	London  
+
+    Find the total salary acording to the city means city wise total salary.
+    London              	27300
+    New York            	15500
+    Sydney              	7600  
+
+    Find the total salary citywise as well as gender wise
+    London              	Male      	27300
+    New York            	Female    	8500
+    New York            	Male      	7000
+    Sydney              	Female    	4800
+    Sydney              	Male      	2800 
+
+    Find the total salary , number of employees citywise and gender wise.
+    London              	Male      	27300	5
+    New York            	Female    	8500	2
+    New York            	Male      	7000	1
+    Sydney              	Female    	4800	1
+    Sydney              	Male      	2800	1    
+
+    We want to filter the result by male only, use having clause toachieve this
+    London              	Male      	27300	5
+    New York            	Male      	7000	1
+    Sydney              	Male      	2800	1   
+
+Q10. Create two tables tableEmployee(Id,Name,Gender,Salary,DepartmentId) and tableDepartment(Id,DepartmentName,Location,DepartmentHead) like.
+    1	Tom                 	Male      	4000	1
+    2	Pam                 	Female    	3000	3
+    3	John                	Male      	3500	1
+    4	Sam                 	Male      	4500	2
+    5	Todd                	Male      	2800	2
+    6	Ben                 	Male      	7000	1
+    7	Sara                	Female    	4800	3
+    8	Valarie             	Female    	5500	1
+    9	James               	Male      	6500	NULL
+    10	Russell             	Male      	8800	NULL
+
+    1	IT                  	London              	Rick                
+    2	Payroll             	Delhi               	Ron                 
+    3	HR                  	New York            	Christie            
+    4	Other Department    	Sydney              	Cindrella           
+
+    Join these two tables and create a new table view having fields like Name,Gender, Salary and DepartmentName
+    Tom                 	Male      	4000	IT                  
+    Pam                 	Female    	3000	HR                  
+    John                	Male      	3500	IT                  
+    Sam                 	Male      	4500	Payroll             
+    Todd                	Male      	2800	Payroll             
+    Ben                 	Male      	7000	IT                  
+    Sara                	Female    	4800	HR                  
+    Valarie             	Female    	5500	IT                  
+
+    Show Joins like Inner Join, Left Outer Join , Right Outer Join , Full Outer Join ,  Cross Join.
+    Write the query to select the non matching records from employee table, department table and also from both the tables.
+
+Q11. Create a table tableEmployee1 like :-
+    EmployeeId	Name	ManagerId
+	1			Mike    3
+	2			Rob     1
+	3			Todd    NULL
+	4			Ben     1
+    5           Sam     1
+
+    Perform Left,inner,cross self join in it.
+
+Q12. Use the left self join as above, just in place of null 'No Manager' will be there using
+    - ISNULL , Case statement and COALESCE
+
+Q13. Create a table tableEmployee2 like :-
+    Id  FirstName   MiddleName   LastName
+    1	Sam         NULL	      NULL
+    2	NULL	    Todd          Tanzan              
+    3	NULL	    NULL	      Sara                
+    4	Ben         Parker        NULL
+    5	James       Nick          Nancy       
+
+    We want the Id and name from this table, either FirstName or MiddleName or LastName.
+
+Q14.         
+
+
+

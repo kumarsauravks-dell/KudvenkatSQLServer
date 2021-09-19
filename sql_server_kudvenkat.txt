@@ -1,0 +1,278 @@
+#Ref Video 1,2
+- Navigate to Object Explorer
+	View -> Object Explorer
+- Whenever we create a database 2 files gets generated.
+	.MDF file ->Master Data File(Contains actual data)
+	.LDF file ->Log Data File -> Transaction Log File(Used to recover the database)
+
+- Common Database Query
+	Create -> create database DatabaseName
+	Delete -> drop database DatabaseName
+	Use -> use DatabaseName
+- Rename a Database 
+	alter database DatabaseName modify name = NewDatabaseName 
+	execute sp_renamedb 'OldDatabaseName' , 'NewDatabaseName'
+- When multiple users are using a single database and we want to remove it.
+	alter database DatabaseName set single_user with rollback immidiate
+
+---------------------
+#Ref Video 3,4
+-Primary Key
+	-used to unequely identify each record in a table.
+	
+- Create a table graphically
+	- expand database -> expand table -> 
+		-> right click on Table folder -> New ->Table
+		-> enter record -> column name ,data type -> right click on left most symbol -> set primary key
+		-> right click on tab top -> Save Table1 -> Give Name+Enter
+
+- Create a table using query
+	create table tblGender(
+	Id int not null primary key,
+	Gender nvarchar(50) not null
+	)
+
+- insert data using the designer
+	- Right click on the table -> Edit Top 200 Rows
+
+- To force database integity we use foreign key relationship.
+	- If we make the GenderId as foreign key in tblPerson table, it will not accept a value which is not defined in tblGender table like 99.
+
+- Set foreign key graphically 
+	Right click on table -> Design -> Left most to the column -> right click and select Relationships ->  Add -> Table and column specification
+	-> Set the primary key column, foreign key column 
+
+- Set foreign key using query
+	alter table tblPerson add constraint tblPerson_GenderId_FK foreign key (GenderId) references tblGender(Id)
+
+- Default constraint
+	If a column can accept null value, in case if we dont want to store null when no value is supplied , we can give it av default value
+	eg : alter table tblPerson add constraint DF_tblPerson_GenderId default 3 for GenderId
+	Note : If you dont supply a value for GenderId then only it will assign a default value , if you intentianally set null value to it then it will assign null and not the default value 3, it will work only if you miss to supply a value .
+
+- Adding a new column , with default value to an exisiting table.
+	alter table TABLENAME add COLUMNNAME DATATYPE NULL|NOT NULL CONSTRAINTNAME default DEFAULTVALUE
+
+- Dropping a constraint
+	alter table TABLENAME drop constraint CONSTRAINTNAME
+
+-------------------------------
+#Ref Video 5
+- Cascading Referential Integrity
+	-tblPerson has a foreign key of GenderId , what if we delete the record from tblGender which is refering to tblPerson 
+	-we have four options in this case
+		- No Action -> Delete/Update is rolled back
+		- Casacade -> all rows containing those foreign key are also deleted or updated.
+		- Set Null -> all rows containing those foreign key are set to null.
+		- Set Default -> all rows containing those foreign key are set to default value defined in default constraint.
+
+	-how to set one of these options
+		Right click on tblPerson -> expand the Keys folder -> Right click on foreign key -> Modify -> Insert and Update specification -> change the delete and update rule.
+
+--------------------------------
+#Ref Video 6
+- Check constraint graphically
+	- to add a check constraint -> Right click on the constraint folder inside the table -> New constraint
+		-> in the Expession , write the condition like : Age>0 And Age<150
+		-> Save 
+		-> If we will intentianally inserting null , check constraint will not work and data will get inserted.
+
+- Check constraint using query
+	- alter table TABLENAME add constraint CONSTRAINTNAME check BOOLEAN_EXPRESSION
+	- alter table tblEmp add constraint CK_tblEmp_Age check (Age>0 and Age<150)
+
+----------------------------------
+#Ref Video 7,8
+- Identity column
+	- how to check if a column is an identity column?
+		Right click on the column -> Select Properties -> Identity (true/false)
+	- set a column to be an identity column
+		-using the designer 
+			Select the column -> Modify -> In Column Properties window -> Identity Spectification -> set Is Identity to True, Identity Increment to 1, Identity Seed to 1
+		-using Query
+			PId int identity(1,1) primary key
+
+- Reuse the old id if deleted in identity column
+	Normally if an id is deleted it is not reused when a new record is inserted , to reuse it:
+	- set identity_insert tblPerson1 on
+	- insert into tblPerson1(PId,Name) values (1,'Martha')
+	- Note : Once identity_insert is on we cant able to insert like : insert into tblPerson1 values ('Mary')
+				But to do so we have to set identity_insert tblPerson1 off
+
+- Delete all the record from a table
+	query :- delete from tblPerson1
+	- after deletion of all records when we insert a new record it start just after the last identity value.
+		to correct it we can use query :- dbcc checkident(tblPerson1,reseed,0)
+
+	
+- Difference between SCOPE_IDENTITY() and @@IDENTITY 
+	- SCOPE_IDENTITY() -> returns the last generated identity of same session and same scope.
+		same session means jo connection hum open kiye matlab New Query window . Same scope means main scope koi sub scope nhi.
+	- @@IDENTITY -> returns the last identity of same session across any scope.
+		any scope means sub ya last inserted record ka scope.
+	- IDENT_CURRENT('TableName') - specific table across any session and any scope.
+
+----------------------
+#Ref Video 9
+- Unique key 
+	kisi column k uniqueness k liye hum primary key ya unique key ko use krte hain.
+	kisi table me Id , email , pan_number sare column ko uniqune hi rhna chaiye but ek se jada primary key nhi ho skte ek table me , isliye aur sare unique key.
+	primary key does not allow any null but unique key has only one null.
+
+	- set unique key using designer
+		Right click on table -> Design -> Select any column -> Indexes/Keys -> Add -> Set Columns : column , Type : Unique Key , Name : UQ_tableName_ColumnName 
+
+	- set unique key using query
+		alter table tblEmp1 add constraint UQ_tblEmp1_Phone Unique(Phone)
+
+	- delete unique key constraint 
+		alter table tblEmp1 drop constraint UQ_tblEmp1_Phone
+
+------------------------
+#Ref Video 10
+    - specific column or all columns
+		- using designer
+			Right click on table -> Script Table As -> Select To -> New Query Editor window
+    - distinct rows
+		select distinct city from tblPerson
+
+    - filtering with where clause
+		select * from tblPerson where City='London'
+
+		select * from tblPerson where City<>'London'
+		select * from tblPerson where City!='London'
+
+		select * from tblPerson where Age = 20 or Age = 23 or Age = 29 
+		select * from tblPerson where Age in  (20,23,29)
+
+		select * from tblPerson where Age BETWEEN 20 And 25
+
+		select * from tblPerson where City like 'L%'
+		select * from tblPerson where Email not like'%@%'
+
+    - wild cards in Sql
+		% -> any number of character eg: like %@%
+		_ -> exactly one character eg: like _@_ 
+		[] -> should start with M,S,T eg: like '[MST]%'
+		[^] -> should not start with M,S,T eg: like '[^MST]%'
+
+    - joining multiple constraints using AND and OR operators
+		select * from tblPerson where (City = 'London' or City = 'Mumbai') AND Age > 25
+
+    - sorting rows using order by
+		select * from tblPerson order by Name -> sorting names in alphabatical order
+		select * from tblPerson order by Name DESC
+		select * from tblPerson order by Name DESC, Age DESC -> Jab 2 ya 2 se jada same name milega to uska sorting age k hisab se hoga.
+
+    - selecting top n or top n percentage of rows 
+		select top 10 * from tblPerson
+		select top 10 Name,Age from tblPerson
+		select top 1 Percent * from tblPerson
+		select top 1 * from tblPerson order by Age DESC
+
+-----------------------
+#Ref Video 11
+	- aggregate function 
+		select Sum(Salary) from tblEmployee
+		select Min(Salary) from tblEmployee
+		select Max(Salary) from tblEmployee
+
+	- group by clause can be used with aggregate function
+		- select totalsalary of employees city wise( group by single column)
+			select City,Sum(Salary) as TotalSalary from tblEmp2 group by City 
+		- select total salary of employees city wise as well as gender wise(group by multiple columns)
+			select City, Gender, Sum(salary) as TotalSalary from tblEmp2 group by City,Gender order by City
+		- select total salary,total employees city wise as well as gender wise
+			select City, Gender, Sum(salary) as TotalSalary,COUNT(id) as NumberOfEmployees from tblEmp2 group by City,Gender order by city,gender
+		- Note : to add spaces in column namewe can use [] like [Number of Employees]
+
+		- having is used to filter the data, same as where clause but is used after the group by clause.
+			select City, Gender, Sum(salary) as TotalSalary,COUNT(id) as NumberOfEmployees from tblEmp2 group by City,Gender Having Gender='Male'
+
+		- we can not use aggregate function with where clause like
+			select * from tblEmp2 where Sum(Salary) > 4000
+		
+		-  summary
+			- where can be used with select,insert and update statements, having can be only used with select statement.
+			- where filters rows before aggregation(Grouping) , having groups after aggregation.
+			- aggregate function can not be used in where clause unless it is in a sub query contained in a having clause, aggregate functions can be used in having clause.
+
+-------------------
+#Ref Video 12
+	- Joins -> are used to retrieve data from 2 or more related tables. In general tables are related to each other using foreign key constraints.
+	- Inner Join -> returns only the matching rowsbetween both the tables. Non matching rows are eliminated.
+	- query to join employee and department to show DepartmentName Against employee
+		select Name,Gender,Salary,DepName from tableEmployee join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id
+
+	- Left Join -> returns all the matching rows + non matching rows from the left table
+	- query to join employee and department to show the matching and non matching employee records with DepartmentName
+		select Name,Gender,Salary,DepName from tableEmployee left join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id
+
+	- Right Join -> returns all the matching rows + non matching rows from the right table.
+	- query to join employee and department to show the matching and non matching rows from department table
+		select Name,Gender,Salary,DepName from tableEmployee right join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id
+
+	- Full Join -> returns all rows from both the left and right tables, including the non mathing rows.
+
+	- Cross Join -> produces the cartesian product of the two tables involved in the join
+		if employee table has 10rows and department table has 4 rows , cross join will produce 40 rows.
+		cross join does not have on clause
+		select Name,Gender,Salary,DepName from tableEmployee cross join tableDepartment
+
+	- Note : Join or Inner Join are same, Left Join or Left Outer Join are same
+			 Right Join or Right Outer Join are same, Full Join or Full Outer Join are same
+
+--------------------
+#Ref Video 13
+	- query to select only non matching rows from left table 
+		select Name,Gender,Salary,DepName from tableEmployee left join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id where tableDepartment.Id is null
+		select Name,Gender,Salary,DepName from tableEmployee left join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id where tableEmployee.DepartmentId is null
+
+	- query to select only non matching rows from right table.
+		select Name,Gender,Salary,DepName from tableEmployee right join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id where tableEmployee.DepartmentId is null
+
+	- query to select only non mathing rows from both the table
+		select Name,Gender,Salary,DepName from tableEmployee full join tableDepartment on tableEmployee.DepartmentId=tableDepartment.Id where tableEmployee.DepartmentId is null
+
+----------------------
+#Ref Video 14
+	- Self Join -> Joining a table with itself
+	- Lets say we have table like :-
+	EmployeeId	Name	ManagerId
+	1			Mike    3
+	2			Rob     1
+	3			Todd    NULL
+	4			Ben     1
+	5			Sam		1
+
+	- left outer self join
+		select E.Name as Employee,M.Name as Manager from tableEmployee1 E left join tableEmployee1 M on E.ManagerId=M.EmployeeId
+
+	- inner join
+		select E.Name as Employee,M.Name as Manager from tableEmployee1 E join tableEmployee1 M on E.ManagerId=M.EmployeeId
+
+	- cross join 
+		select E.Name as Employee,M.Name as Manager from tableEmployee1 E cross join tableEmployee1 M 
+
+-------------------------
+#Ref Video 15,16
+	Different ways to replace NULL in Sql 
+    - ISNULL() function
+		select isnull(null,'No Manager') as Manager
+		select isnull('Pragim','No Manager') as Manager
+
+		select E.Name as Employee,isnull(M.Name,'No Manager') as Manager from tableEmployee1 E left join tableEmployee1 M on E.ManagerId=M.EmployeeId
+    
+	- Case statement
+		select E.Name as Employee,case when M.Name is null then 'No Manager' else M.Name end as Manager from tableEmployee1 E left join tableEmployee1 M on E.ManagerId=M.EmployeeId
+
+    - COALESCE() function
+		- Similar to isnull
+			select E.Name as Employee,coalesce(M.Name,'No Manager') as Manager from tableEmployee1 E left join tableEmployee1 M on E.ManagerId=M.EmployeeId
+
+		- Returns the first non null value.
+			  
+
+
+
+	
