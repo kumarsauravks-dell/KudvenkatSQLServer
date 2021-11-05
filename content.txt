@@ -54,8 +54,94 @@
 #16. COALESCE() function
     - COALESCE() function example
 
+#17. Union and Union All
+    - Purpose of Union and Union All
+    - Difference between Union and Union All
+    - Difference between Join and Union
 
+#18. Stored Procedures
+    - What is Stored Procedures
+    - Stored Procedures example
+    - Creating a stored Procedures with parameters
+    - Altering SP
+    - Viewing the text of the SP.
+    - Dropping the SP 
 
+#19. Stored Procedures with output parameters
+    - Creating and executing sp with output parameters
+    - some of the useful system stored Procedures
 
+#20. Stored Procedures output parameters or return values.
+    - What are stored procedure return values
+    - Difference b/n sp returns value and output parameters
+    - When to use output parameters over returns values
 
+#21. Advantages of stored procedure
+    - over adhoc queries (inline SQL)
 
+#22. String function in Sql
+    - Commonly used built-in string functions
+
+#23. String function continued
+    - Few More Commonly used built in string Functions
+        - LEFT()
+        - RIGHT()
+        - CHARINDEX()
+        - SUBSTRING()
+
+#24. String function contained
+    - Few more commonly used built in string functions
+        - Replicate
+        - Space 
+        - Patindex
+        - Replace 
+        - Stuff
+
+#25. DateTime function in SQL Server
+    - DateTime data types
+    - DateTime functions
+    - Understand UTC time and Time Zone offset
+
+#26. DateTime functions continued
+    - IsDate, Day, Month, Year and DateName 
+    - A practical example of using these functions.
+
+#27. DateTime function continued
+    - DatePart, DateAdd, DateDiff Functions
+    - practical example of using these functions
+
+#28. Cast and Convert functions
+    - CAST and CONVERT functions
+    - When to choose one over other
+
+#29. Mahematical functions
+    - Abs
+    - Ceiling
+    - Floor
+    - Power
+    - Rand
+    - Square
+    - Sqrt
+    - Round
+
+#30. User Defined Functions
+    - Types of user defined functions
+    - Creating a scalar user defined function.
+    - Calling scalar user defined function
+    - Places where we can use scalar user defined function
+    - Altering and dropping user defined function
+
+#31. Inline Table Valued Functions
+    - Creating and calling table valued function
+    - Where do we use inline table valued function.
+
+#32. Multi-Statement Table valued functions
+    - Creating and calling Multi-Statement Table valued function
+    - Difference b/n inline and multi-statement table valued function
+
+#33. Functions - Important Concepts.
+    - Deterministic and Nondeterministic Functions
+    - Encrypting Functions
+    - Schema binding functions
+
+#34.

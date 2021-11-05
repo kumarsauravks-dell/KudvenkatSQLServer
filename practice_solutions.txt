@@ -1,0 +1,200 @@
+Solution 17
+Expand any Database -> Programability -> Functions -> System Functions -> String Functions
+------------
+Solution 18
+1. select ASCII('A')
+2. select CHAR(65)
+3.  declare @Start int
+    set @Start=65
+    while (@Start<=90)
+    begin
+        print char(@Start)
+        set @Start+=1
+    end
+4.  declare @Start int
+    set @Start=97
+    while(@Start<=122)
+    begin
+        print char(@Start)
+        set @Start+=1
+    end
+5. declare @Start int
+    set @Start=48
+    while(@Start<=57)
+    begin
+        print char(@Start)
+        set @Start+=1
+    end
+6. select LTRIM('   Hello   ')
+    select RTRIM('   Hello   ')
+    select RTRIM(LTRIM('   Hello   '))
+7. select UPPER('Hello')
+8. select LOWER('Hello')
+9. select REVERSE('Hello')
+10. select LEN('Hello')
+11. Select LEFT('ABCDEF',3)
+12. Select RIGHT('ABCDEF',3)
+13. select CHARINDEX('@','sara@ccc.com')
+14. select SUBSTRING('sara@ccc.com',6,7)
+15. declare @str nvarchar(25)
+    set @str='kumarsauravks@gmail.com'
+    select SUBSTRING(@str,CHARINDEX('@',@str)+1,LEN(@str)-CHARINDEX('@',@str)+1) as Domain
+16. select REPLICATE('kumar ',3)
+17. select 'kumar'+ SPACE(5)+'saurav'
+18. select REPLACE('saurav@gmail.com','gmail','rediffmail')
+19. select STUFF('saurav@gmail.com',2,6,'*****')
+20. select PATINDEX('%@gmail.com','saurav@gmail.com')
+
+------------------
+Solution 19.
+ create table tblDateTime
+ (
+ c_time time,
+ c_date date,
+ c_smalldatetime smalldatetime,
+ c_datetime datetime,
+ c_datetime2 datetime2,
+ c_datetimeoffset datetimeoffset
+ )
+ insert into tblDateTime values(GETDATE(),GETDATE(),GETDATE(),GETDATE(),GETDATE(),GETDATE())
+ select * from tblDateTime
+ ----------------------
+ Solution 20. 
+select ISDATE('Saurav')
+select ISDATE(GetDate())
+select ISDATE('2021-11-04 17:51:59.268')
+select ISDATE('2021-11-04 17:51:59.2680955')
+--------------------------
+Solution 21
+select DAY(GETDATE())
+select DAY('05/15/2021')
+
+select MONTH(GETDATE())
+select MONTH('05/15/2021')
+
+select YEAR(GETDATE())
+select YEAR('05/15/2021')
+----------------------
+Solution 22
+declare @birthday datetime
+set @birthday='1993-09-20 10:20:30.627'
+select DATENAME(WEEKDAY,@birthday) as Day, DATENAME(MONTH,@birthday) as Month
+-----------------------
+Solution 23
+select DATEPART(MONTH,GETDATE())
+select DATENAME(MONTH,GETDATE())
+------------------------------
+Solution 24
+1. select DATEADD(MONTH,1,GETDATE())
+2. select DATEADD(DAY,-20,GETDATE())
+3. select DATEDIFF(MONTH,'11/30/2005','01/31/2006')
+4. select DATEDIFF(DAY,'11/30/2005','01/31/2006')
+-------------------------------
+Solution 25
+create function fnComputeAge(@DOB datetime)
+returns nvarchar(50)
+as 
+begin 
+declare @tempdate datetime,@years int, @months int, @days int
+
+select @tempdate=@DOB
+
+select @years=DATEDIFF(YEAR,@tempdate,GETDATE()) -
+				case
+					when (MONTH(@DOB) > MONTH(GETDATE())) or
+					(MONTH(@DOB) = MONTH(GETDATE()) AND DAY(@DOB) > DAY(GETDATE()))
+					THEN 1 ELSE 0
+				end
+
+select @tempdate=DATEADD(YEAR,@years,@tempdate)
+
+select @months = DATEDIFF(MONTH,@tempdate,GETDATE()) -
+				case 
+					when DAY(@DOB) > DAY(GETDATE())
+					then 1 else 0
+				end
+select @tempdate=DATEADD(MONTH,@months,@tempdate)
+
+select @days=DATEDIFF(DAY,@tempdate,GETDATE())
+	declare @Age nvarchar(50)
+	set @Age=CAST(@years as nvarchar(4)) + ' Years '+ CAST(@months as nvarchar(2)) + ' Months '+CAST(@days as nvarchar(2))+ ' Days '
+
+	return @Age
+end
+
+Execution -> select dbo.fnComputeAge('09/09/1993')
+------------------------------------------
+Solution 26
+select CAST(GETDATE() as nvarchar) as ConvertedDate
+select CONVERT(nvarchar,GETDATE()) as ConvertedDate
+select Convert(nvarchar,GetDate(),103) as ConvertedDate
+-------------------------------
+Solution 27
+declare @Id int
+set @Id=101
+select 'Saurav'+' - '+CAST(@Id as nvarchar)
+--------------------------------
+Solution 28
+1. select ABS(-101.5) as AbsoluteValue
+2. select CEILING(15.2),CEILING(-15.2)
+3. select FLOOR(15.2),FLOOR(-15.2)
+4. select POWER(2,3) as PowerValue
+5. select SQUARE(9) as SqareValue
+6. select SQRT(81) as SqrtValue
+7. select FLOOR(RAND()*100) as RandomValue
+8.  declare @Counter int
+    set @Counter=1
+    while(@Counter<=10)
+    begin
+    print FLOOR(RAND()*100)
+    set @Counter+=1
+    end
+-------------------------------
+Solution 29
+create function CalculateAge(@DOB Date)
+returns int
+as begin
+declare @Age int
+set @Age=DATEDIFF(YEAR,@DOB,GETDATE())-
+		case 
+			when (MONTH(@DOB) > MONTH(GETDATE())) or
+				(MONTH(@DOB) = MONTH(GETDATE()) and DAY(@DOB) > DAY(GETDATE()))
+			then 1
+			else 0
+		end
+return @AGE
+end
+
+select dbo.CalculateAge('09/09/1993') as Age
+----------------------------------
+Solution 30
+create function fn_EmployeesByGender(@Gender nvarchar(10))
+returns table
+as 
+return (select Id,Name,Gender,City
+		from tblEmp2 
+		where Gender=@Gender)
+
+select * from dbo.fn_EmployeesByGender('Female')
+
+-----------------------------------
+Solution 31
+select * from tblEmp2
+create function fn_ITVF_GetEmployees()
+returns table
+as
+return (select Name,Gender,City from tblEmp2)
+
+select * from fn_ITVF_GetEmployees()
+--------
+create function fn_MSTVF_GetEmployees()
+returns @Table Table (Name varchar(20),Gender varchar(10), City varchar(20))
+as 
+begin
+	insert into @Table
+	Select Name,Gender,City from tblEmp2
+	return
+end
+
+select * from fn_MSTVF_GetEmployees()
+------------------------------------------

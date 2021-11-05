@@ -271,6 +271,333 @@
 			select E.Name as Employee,coalesce(M.Name,'No Manager') as Manager from tableEmployee1 E left join tableEmployee1 M on E.ManagerId=M.EmployeeId
 
 		- Returns the first non null value.
+			select Id , coalesce(FirstName,MiddleName,LastName) as Name from tableEmployee2
+
+---------------------------
+#Ref Video 17
+	Union and Union All	
+		- operators used to combine result set of two or more select queries.
+		- the number,data types, order of columns in the select statement need to be the same
+		select * from tblIndCustomers union select * from tblUkCustomers
+		select * from tblIndCustomers union all select * from tblUkCustomers
+
+		- union removes duplicare records, whereas union all doesnt.
+		- union has to perform distinct sort to remove duplicates, which makes it less faster than union all.
+
+		- Difference between Union and Join
+			Union combines rows from 2 or more tables, whereas Joins combine columns from 2 or more tables.
+
+-----------------------------
+#Ref Video 18,19
+	Stored Procedures
+		- is a group of T-Sql(Transact SQL) statement. 
+		when we want to execute same piece of query again and again we can use a sp and we can call it by name only.
+
+		-query to create a sp
+			create proc sp_getEmployee
+			as
+			begin
+			select Name,Gender from tblEmployee
+			end
+
+		- check if the sp got created
+			Expand the Database -> Programability -> Stored Procedures
+
+		- sp with parameters 
+			create proc sp_getEmployeeByDepIdGender
+			@DepId int,
+			@Gender nvarchar(10)
+			as 
+			begin
+			select * from tblEmployee where Gender=@Gender AND DepId=@DepId
+			end
+
+		- We have to remember the order of parameter or we have to pass the values with parameter name.
+
+		- check the text of sp
+			right click on sp -> Script Stored Procedures -> Create To -> New Query Editor window
+			query -> sp_helptext proc_name
+
+		- delete a procedure
+			drop proc proc_name
+
+		- encrypt a sp
+			alter proc sp_getEmployee
+			with encryption
+			as
+			begin
+			select Name,Gender from tblEmployee
+			end
+
+		- sp with output parameter
+			- to create sp wih output parameter , we use keyword out or output.
+			- if we dont specify the output keyword, when executig sp the variable will be null
+			query
+				create proc spEmployeeByGender 
+				@Gender nvarchar(20),
+				@Count int out
+				as
+				begin
+					select @Count= Count(Id) from tblEmployee where Gender=@Gender
+				end
+
+				declare @EmpCount int
+				exec spEmployeeByGender 'Male',@EmpCount output
+				print @EmpCount
+
+		- useful system stored Procedures
+			- sp_help proc_name -> we can et te name,type and parameters of sp
+				sortcut -> Alt+F1 , can be used with tables too.
+			- sp_helptext proc_name -> text of sp
+			- sp_depends proc_name -> to wic table te sp depends,can be used with table too.
+
+		- Difference b/n output parameter and return value
+			- When we right click a sp and select Execute Stored Procedure -> it will return two values ,it returns an intger status variable, usually zero indicates success and non zero indicates failure. 
+			- output parameter query
+				create proc spGetEmpCount 
+				@EmpCount int output
+				as
+				begin
+					select @EmpCount = count(Id) from tblEmployee
+				end
+
+				declare @TotalEmp int
+				exec spGetEmpCount @TotalEmp out
+				print @TotalEmp
+
+			- return value query
+				create proc spGetEmpCount1
+				as
+				begin
+					return (select count(Id) from tblEmployee)
+				end
+
+				declare @TotalCount int
+				exec @TotalCount = spGetEmpCount1
+				print @TotalCount
+
+			- output parameter to print string value
+				create proc empNameById1
+				@Id int,
+				@Name nvarchar(20) output
+				as
+				begin 
+					select @Name = Name from tblEmployee where Id=@Id
+				end
+
+				declare @Name nvarchar(20) 
+				execute empNameById1 1,@Name out
+				print 'Name : '+@Name
+
+			- return value to print string value
+				create proc empNameById2
+				@Id int
+				as
+				begin
+					return (select Name from tblEmployee where Id=@Id)
+				end
+
+				declare @N nvarchar(20)
+				exec @N=empNameById2 1
+				print @N
+
+				Note: It will throw an error because return value can only return one digit integer and not string.
+
+			- summary 
+			Return State Value 		output parameters
+			only int data type		any datatype 
+			only one value 			more than one also
+			used to conver success 	use to return values 
+			 or failure				 like name,count etc.
+
+--------------------
+#Ref Video 21
+	Advantages of Stored Procedures
+	- Execution Plan retention and reusability
+	- Reduces network traffic
+	- Code reusability and better maintainability
+	- Better Security
+	- Avoid SQL Injection Attacks
+---------------------
+#Ref Video 22,23,24
+Check system defined functions list
+	- Expand any Database -> Programability -> Functions -> System Functions -> String Functions
+		 
+
+Function 			Purpose
+ASCII(char)			returns ASCII code of character expression 
+CHAR(int) 			convert int ascii code to character (range - 0 to 255)
+LTRIM(char)			removes blanks from left side of character expression.
+RTRIM(char)			removes blanks from right side of character
+Lower(char)			convert all the characters to lowercase
+Upper(char)			convert all the characters to uppercae
+Reverse?(string)    reverses all the characters of a given string
+LEN(string)			count the total character or the string, calclates the spaces at the begining or middle of the string and not the end.
+
+LEFT(char,int)				returns the specified number of charaters from the left side of the given string.
+RIGHT(char,int)				returns the specified number of charaters from the right side of the given string.
+CHARINDEX(char,char,int)	CHARINDEX(exp to find,exp to search,start location) returns the starting position of the specific expression in a character string.
+								start location is optional.eg: CHARINDEX('@','sara@aaa.com',1)
+SUBSTRING(char,int,int)		SUBSTRING(exp,start,length) returns part of the string from given string.
+
+REPLICATE(char,int)			REPLICATE(String to be replicated,number of times to replicate)
+							Repeats the string for the specific number of times.
+
+SPACE(int)					gives number of spaces specified
+PATINDEX(char,char)			PATINDEX('%Pattern%',exp) , returns starting position of the first occurence of a pattern in a specified expression.
+							similar to CHARINDEX but also supports wildcards. If pattern not found it will return 0.
+REPLACE(char,char,char) 	REPLACE(string exp, pattern,replacement value) Replaces all occurence of specified string value with another string value.
+STUFF(char,int,int,char)	STUFF(exp,start,length,replacement exp) Inserts replacement expression at the start position specified and remove removes character specified using length parameter.
+
+-----------------------
+#Ref Video 25 
+Data Type 					Format
+time 						hh:mm:ss[.nnnnnnn]
+date 						YYYY-MM-DD
+smalldatetime				YYYY-MM-DD hh:mm:ss
+datetime 					YYYY-MM-DD hh:mm:ss[.nn]
+datetime2 					YYYY-MM-DD hh:mm:ss[.nnnnnnn]
+datetimeoffset				YYYY-MM-DD hh:mm:ss[.nnnnnnn][+|-]hh:mm
+
+UTC - Coordinated Universal Time
+	based on UTC the world regulates clock and time.
+	UTC and GMT are slightly different.
+
+Functions					DateTime Format 						Description
+GETDATE() 					2021-11-04 23:18:31.223					Commonly Used
+CURRENT_TIMESTAMP			2021-11-04 23:19:38.557					ANSI SQL equivalent to GETDATE
+SYSDATETIME()				2021-11-04 23:20:14.3929406				More fractional seconds precision
+SYSDATETIMEOFFSET()			2021-11-04 23:20:45.4907968 +05:30		More f_s_p + time zone offset 
+GETUTCDATE()				2021-11-04 17:51:21.113					UTC DateTime
+SYSUTCDATETIME()			2021-11-04 17:51:59.2680955				UTC DateTime + more f_s_p
+
+-----------------------
+#Ref Video 26
+ISDATE() - checks for valid date,time or datetime
+			returns 0 for success and 1 for failure
+			For datetime2,datetimeoffset values IsDate returns 0.
+DAY()		returns the day number of given date.
+MONTH()		returns the month number of given date.
+YEAR()		returns the year number of given date
+DateName    DateName(DatePart,Date) returns a string that represents a part of the given date.
+
+DatePart		Abbreviation
+year 			YY,YYYY
+quater 			qq,q
+month			mm,m 
+dayofyear		dy,y 
+day 			dd,d 
+week 			wk,ww 
+weekday 		dw
+hour			hh
+minute 			mi,n 
+second 			ss,s 
+millisecond 	ms 
+microsecond 	mcs 
+nanosecond 		ns 
+TZoffset 		tz 
+-----------------------
+#Ref Video 27
+DatePart 	DateName(DatePart,Date) returns an integer. similar to DateName
+DateAdd 	DateAdd(DatePart,NumberToAdd,date) returns datetime after adding specified NumberToAdd in the month,day,year,hour,second etc.
+DateDiff 	DateDiff(DatePart,startdate,enddate) returns count of specified DatePart boundary crossed between specified startdate and enddate.
+-----------------------
+#Ref Video 28
+CAST(expression AS data_type[(length)])
+CONVERT(data_type[(length)],expression,[style])
+
+style 	DateFormat
+101		mm/dd/yyyy
+102		yy.mm.dd
+103 	dd/mm/yyyy
+104		dd.mm.yy
+105		dd-mm-yy
+
+-----------------------
+#Ref Video
+ABS(numeric_expression)			returns the absolute(positive) number.
+CEILING(numeric_expression)		returns smallest integer value greater than or equal to parameter.
+FLOOR(numeric_expression)		returns the largest integer value less than or equal to the parameter.
+POWER(expression,power)			returns power of specified expression to specified power.
+SQUARE(Number)					returns square of given number
+SQRT(Number)					returns sqare root of given number
+RAND([Seed_Value]) 				returns a random float value between 0 and 1.
+								returns same value for the same seed.
+ROUND(numeric_expression, length,[function])
+	1. Numeric Expression   	number that we want to Round
+	2. Length 					number of digits we want to round to.if +ve the rounding is applied to decimal part
+								if -ve rounding is applied to number before the decimal.
+	3. optional func parameter	used to indicate rounding or truncation operation.
+								0 indicates rounding, non 0 indicates truncation. Default if not specified is 0.
+
+	Examples
+	- select round(850.556,2) -- returns 850.560
+	- select round(850.556,2,1) -- returns 850.550
+	- select round(850.556,1) -- returns 850.600
+	- select round(850.556,1,1) -- returns 850.500	
+	- select round(850.556,-2) -- returns 900.000
+	- select round(850.556,-1) -- returns 850.000
+
+---------------------------------------
+#Ref Video 30,31,32
+Three types of User Defined Function
+- Scalar functions
+- Inline table valued functions
+- Multi-statement table valued functions
+
+Scalar functions
+- may/may not have parameters but always return a single(scalar) value.
+	return value can be of any datatype expect text,ntext,image,cursor,timestamp
+- We can not use stored procedures in a select or where clause. Function have this ability.
+- To see the content of scalar function we use sp_helptext
+- To alter a function use Alter function function_name
+- To delete a function use drop function function_name
+
+Inline Table valued function 
+- returns a table.
+- we specify the table as return type instead of any scalar datatype.
+- function body is not enclosed between Begin and End blocks.
+- the structure of the able tahat gets returned is determined by the select statement within the function.
+- can be used to achieve the functionality of parameterised views.
+- table returned can also be used in joins with other tables.
+
+Multi-Statement Table Valued function
+- We specify the the structure of the table that gets returned.
+- It has Begin and End blocks.
+- Always prefer to use ITV functions over MSTV functions
+- Its possible to update the underlying table using ITV functions, but not possible with MSTV functions.
+
+-----------------------------------
+#Ref Video 33
+Deterministic functions
+- always returnssame result anytime they are called with a specific set of input values and gives the same state of the database.
+	eg: Square(),Power(),Sum(),Avg(),Count() etc.
+
+Nondeterministic functions
+- may return different values each time they are called with a specific set of input values even if the database state that they access remains the same.
+	eg: GetDate(),CURRENT_TIMESTAMP
+
+Rand() function
+- is non deterministic function , but if the seed value is provided it becomes deterministic
+
+Encrypting a function
+- Use WithEncryption to encrypt the text of function
+
+Schema Binding option
+- specifies that function is bound to the database object that it references.
+- when this option is specified,the base object cannot be modified in any way that would affect the function defination.
+-the function defination must be dropped to remove dependencies on the object that is to be modified.
+- Use WITHSCHEMABINDING 
+---------------------
+
+
+
+
+
+
+
+
+
 			  
 
 

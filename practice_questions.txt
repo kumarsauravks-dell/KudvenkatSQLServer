@@ -115,7 +115,77 @@ Q13. Create a table tableEmployee2 like :-
 
     We want the Id and name from this table, either FirstName or MiddleName or LastName.
 
-Q14.         
+Q14. Create to tables tblIndCustomers and tblUkCustomers with same columns like Id Name and Email.
+        Show the difference between Union and Union All.
 
+Q15. Create a stored procedure to select only the Name and Gender from tblEmployee
+     Create a store procedure which will take the Gender and DepId from user and return the list of Employee accordingly from tblEmployee table.
+     Encrypt te sp
 
+Q16. Create a sp wit output paramete which return the total Count of male or Female employee.
+     Create two sp one of which print the total Count of employee using output parameter, and te other which return the total Count of Employees
+     Create two sp for returnin the firstname after giving the id, show that return value can not be a string.
 
+Q17. How to view system defined string functions? 
+
+Q18. Write the select query for the followig:
+    1. Ascii value of 'A'
+    2. Char value of 65
+    3. Print A-Z using Char function.
+    4. Print a-z using Char function.
+    5. Print 0-9 using Char function.
+    6. trim spaces from '   Hello   ' using functions LTRIM and RTRIM
+    7. Upppercase of 'Hello'
+    8. Lowercase of 'Hello'
+    9. Reverse the charaters of 'Hello'
+    10. Calculate length of 'Hello'
+    11. print 'ABC' from the string 'ABCDEF'
+    12. print 'DEF' from the string 'ABCDEF'
+    13. find the CHARINDEX of @ in 'sara@ccc.com'
+    14. select the domain from 'sara@ccc.com'
+    15. query to print only the domain of any email address
+    16. replicate the string 'kumar ' 3 times.
+    17. print string 'kumar saurav' with 5 spaces between them
+    18. replace gmail with rediffmail in 'saurav@gmail.com'
+    19. replace 'saurav@gmail.com' with 's*****gmail.com'
+    20. find the index of the pattern '@gmail.com' in 'saurav@gmail.com'
+    
+Q19. Create a table tblDateTime and store different date datatypes like date,time,smalldatetime,datetime,datetime2,datetimeoffset.
+        Finally insert GETDATE() to all the columns and check the difference.
+
+Q20. Check the following string values if it is valid date or not.
+        'Saurav',GetDate(),'2021-11-04 17:51:59.268','2021-11-04 17:51:59.2680955'
+
+Q21. Check the current and '05/15/2021' day, month year.
+
+Q22. Write a query to select the day and month of your birthday ie. '1993-09-20 10:20:30.627'.
+
+Q23. Write a query to show the difference between DatePart and DateName with current date.
+
+Q24. Write query for the followig:
+    1. Add one month to the current date.
+    2. Subtract 20 days to the current date.
+    3. Calculate the difference between the months from '11/30/2005' to '01/31/2006'
+    4. Calculate the difference between the days from '11/30/2005' to '01/31/2006'
+
+Q25. Write a function which acceps a date of birth and returns the age in years months and days.
+
+Q26. Select the current date in nvarchar using CAST and CONVERT both. Use Convert and style the date with dd/mm/yyyy format.
+
+Q27. Create a query to concatinate a string 'Saurav' and an integer Id 101.
+
+Q28. Write the query for the following:
+    1. Find the absolute value of -101.5
+    2. Find the ceiling value of 15.2 and -15.2
+    3. Find the floor value of 15.2 and -15.2
+    4. Find 2 to the power 3.
+    5. Find sqare of 9 
+    6. Find sqareroot of 81
+    7. Generate a random number between 1 and 100.
+    8. Print 10 random numbers between 1 and 100.
+
+Q29. Create a scalar function that takes the date of birth from user and returnd his age in years.
+
+Q30. Create a table valued function which takes the Gender as parameter and return the table with specified gender.
+
+Q31 Create a inline table valued function fn_ITVF_GetEmployees() and multi statement table valued function fn_MSTVF_GetEmployees() to return a table having Name,Gender,City columns.
