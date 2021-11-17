@@ -589,6 +589,186 @@ Schema Binding option
 -the function defination must be dropped to remove dependencies on the object that is to be modified.
 - Use WITHSCHEMABINDING 
 ---------------------
+#Ref Video 34
+What are Temporary Tables?
+- Very similar to Permanent Tables. Permanent tables get created in database we specify and remain their untill we delete them.
+- Temporary tables get created in TempDB and are automatically deleted when they are no longer in use.
+
+Types of Temporary tables
+1. Local Temporary Tables
+2. Global Temporary Tables
+
+Local Temporary Tables
+- Created same as Permanent Table but only # is prefixed before table name.
+- Created in TempDB. Name of table is suffixed with lot of underscore and numbers , so to to find it we have to use like in our query.
+	- select name from tempdb..sysobjects where name like '#PersonDetails%'
+- Is available only for the connection that has created that table.
+- Is automatically dropped, when the connection that has created it is closed.
+- we can explicitely drop it using -> drop table #PersonDetails
+
+ - If Temporary table is created inside a stored procedure, it automatically dropped upo the completion of execution of sp.
+ - It is possible for different connection to create temporary table with same name.
+
+Global Temporary Tables
+- To create prefix the name with 2#(##) symbols.
+	create table ##EmployeeDetails(Id int,Name nvarchar(20))
+- Visible to all connections and are only destroyed when the last connection referencing the table is closed.
+- Global temp table has to be unique, if we inspect the object explorer window we can see no random numbers suffixed at the end of that table name.
+
+------------------------------------------
+#Ref Video 35,36
+Why Indexes
+- Indexes are used by queries to find data from tables quickly.
+- Indexes are created on table or view, is very similar to an index we find in a book.
+- If there is no index then query engine checks every row in the table from begining to end which is bad for performance.
+- Consider a query - select * from Employees where salary > 5000 and Salary < 7000
+	If there is no index in salary column , query engine need to search each record for this condition.
+
+Creating an Index 
+- create index IX_tblEmployee_Salary on tblEmployee (Salary Asc)
+
+Check the index
+- sp_Helpindex tblEmployee
+- Databas -> Table -> Indexes
+
+Deleteing an index
+- drop index tblEmployee.IX_tblEmployee_Salary
+
+Index Types
+1. Clustered
+2. NonClustered
+3. Unique
+4. Filtered
+5. XML
+6. Full text
+7. Spatial
+8. Columnstore
+9. Index with included columns
+10. Index with computed columns
+
+Clustered Index
+- A clustered index determines the physical order of data which get stored in a table.
+	For this reason a table can have only one clustered index.
+- Create a table tblEmployee and mark Id as primary key. Primary key contraint create a clustered index automatically if no clustered index already exist on the table.
+	To confirm -> exec sp_helpindex tblEmployee
+	Now insert some values in table but not in sequential order. 
+	When you now try to select all the data from tblEmployee you will find the data are displayed in ascending order.
+
+ - We cant create more than one clustered index in a table but we can create a clustered index in combination with two columns - lets prove it
+ 	Drop the automatically created primary key clustered index -> from object explorer
+	- create clustered index IX_tblEmployee_Gender_Salary on tblEmployee(Gender desc , Salary asc)
+	- now the data is arranged first with Gender and then with salary.
+
+Non clustered Index
+- The non clustered index is stored seperately from the actual data.
+	A table can have more than one non clustered index just like how a book can have index by chapters at the begining and other by common terms at the end.
+- In the index itself , the data get stored in ascending or descending order of the index key, which doesnot anyway influence the storage of data in the table.
+- create non clustered index IX_tblEmployee_Name on tblEmployee(Name)
+
+Difference b/n Clustered and NonClustered Index
+1. Only one clustered index per table , whereas more than one in case of non clustered.
+2. Clustered is faster because non clustered has to refer back to the table if selected column is not present in the index.
+3. Clustered index determines the storage order of rows in the table, hencedoesnot require additional spaces.
+	In case of non clustered , it is stored seperately from the table, and additional storage space is required.
+---------------------------------------------------------------
+#Ref Video 37
+Unique Index
+- used to enforce uniqueness of key values in the index.
+- by default Primary Key constraint , creates a unique clustered index.
+- uniqueness is the property of an index and both clustered and non clustered indexes can be unique.
+	create unique NonClustered Index UIX_tblEmployee_FirstName_LastName on tblEmployee(FirstName,LastName)
+
+Difference between Unique constraint and Unique index
+- there is no difference b/n these. Infact when we add a unique constraint a unique index gets created behind the scenes.
+
+Points to remember
+- By default a primary key constraint, creates a unique clustered index, whereas a unique constraint creates a unique non clustered index. These defaults can be changed if we wish to.
+- A unique constraint or a unique index cannot be created on an existing table, if the table contains duplicate values in the key columns .
+	Obviously to solve this remove the key columns from the index defination or update or delete or update the duplicate values.
+
+---------------------
+#Ref Video 38
+Advantages of Indexes
+- Select statements became faster.
+- Delete and Update become faster.
+- Order by ascending and descending becomes faster
+- Group by can be faster.
+
+Disadvantages of Indexes
+- Adittional Disk spaces - spaces to store indexes along with table records
+- Insert , Update, Delete can become slow- updation in one records needs to be updated in all related indexes.
+
+Covering Query
+- If all the columns that you have requested in the selected clause of the query, are present in the index,then there is no need to lookup in the table again.
+	The requested columns data can simply be returned from the index.
+
+- A clustered index always covers a query, since it contains all the data in a table. 
+	A composite index is an index on two or more columns. Both clustered and non-clustered indexes can be composite indexes.
+	To a certain extent , a composite index can cover a query.
+-------------------------
+#Rev Video 39
+View
+- is nothing more than a saved sql query.
+	can also be considered as virtual table.
+
+Advantages of using Views
+-  can be used to reduce the complexity of database schema.
+- can be used as a mechanism to implement rows and column level security.
+	row  level-only view IT depar, column level - salary column is not included in view.
+- can be used to present aggregated data and hide detailes data.
+
+Modify a view
+- Alter view statement
+
+Delete a view
+- Drop view vwName
+
+Q. Views are just a virtual view of an underlying base table , So is it possible to update it?
+A. Yes it is possible to insert,update and delete from the base table through the view.
+
+Note: If a view is based on multiple tables, and if we update the view, it may not update the underlying base tables correctly.
+	To correctly update a view , that is based on multiple table , INSTEAD OF triggers are used.
+
+-------------------------
+#Ref Video 41
+Indexed Views
+- A stadard or non-indexed view is just a virtual table and it does not store any data by default
+	However when we create an index on a view the view gets mterialized. This means view is now capable of storing data.
+	In Sql - Indexed View , In Oracle - Materialized Views.
+
+Guidelines for creating indexed views
+1. The view should be created with SchemaBinding option.
+2. If the aggregate function in the Select List ,references an expression , and if there is a possibility for that expression to become null , then a replacement value should be specified.
+3. If Group By  is specified the view select list must contain a COUNT_BIG(*) expression 
+4. The base table in the view, sshould be referenced with two part name.
+	- create unique clustered index UIX_vwTotalSalaryByProduct_Name on vWTotalSalesByProduct(Name)
+
+-------------------------
+#Ref Video 42
+1. We cannot pass parameters to a view. Table values functions are an excellent replacement for parameterised views.
+2. Rules and Defaults cannot be associated with views.
+3. The Order By clause is invalid in views unless TOP or FOR XML is also specified.
+4. Views can not be based on temporary tables.
+
+-------------------------
+#Ref Video 43
+Triggers are of 3 types:
+1. DML Triggers
+2. DDL Triggers
+3. LOGON Triggers
+
+DML Triggers -  Fired automatically in response to DML events(Insert,Update,Delete)
+	DML Triggers are of two types
+	1. After triggers/ For Triggers
+	2. Instead of Triggers
+
+	After Triggers - The insert,update,delete statement causes an after trigger to fire after the respective statement complete execution.
+		Trigger for update event ,makes use of both inserted and deleted tables. The inserted table contains the updated data and the deleted ta contains the old data.
+	Instead of triggers - The insert,update,delete statement causes an instead of trigger to fire after respective statement complete execution.
+		To insert/update a view having the combination of join of two or more base table, it is not directly possible. So to achieve this we use instead of triggers.
+
+In most cases Joins are faster than Sun-Queries.However in case where you only need a subset of record from the table that you are joining with, sub-queries can be faster.
+
 
 
 

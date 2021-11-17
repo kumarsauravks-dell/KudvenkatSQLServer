@@ -189,3 +189,66 @@ Q29. Create a scalar function that takes the date of birth from user and returnd
 Q30. Create a table valued function which takes the Gender as parameter and return the table with specified gender.
 
 Q31 Create a inline table valued function fn_ITVF_GetEmployees() and multi statement table valued function fn_MSTVF_GetEmployees() to return a table having Name,Gender,City columns.
+
+Q32. Create a Local Temorary Table PersonDetails(Id,Name,Gender). Insert some values in it and check in tempdb if it exsists.
+
+Q33. Create a sp spCreateLocalTempTable which creates a temp table #PersonDetails , inserts some values and select those values. 
+        Try to check #PersonDetails if exists after the execution of sp.
+
+Q34. Create a view vwEmployeeByDepartment using tblEmployee and tblDepartment table , execute it and try to see the text of this view.
+
+Q35. Create the following tables.
+    - tblProduct
+    Id  Name    UnitPrice
+    1	Books	20
+    2	Pens	14
+    3	Pencils	11
+    4	Clips	10
+
+    - tblProductSales
+    Id   ProductId  QuantitySold
+    1	    1	    10
+    2	    3	    23
+    3	    4	    21
+    4	    2	    12
+    5	    1	    13
+    6	    3	    12
+    7	    4	    13
+    8	    1	    11
+    9	    2	    12
+    10	    1	    14
+
+    Now create an indexed view to show the following
+    - vwTotalSalesByProduct
+    Name    TotalSales  TotalTransactions
+    Books	    960	            4
+    Clips	    340	            2
+    Pencils	    385	            2
+    Pens	    336	            2
+
+Q36. Create two Tables tblEmpl(Id,Name,Salary,Gender) and tblEmplAudit(Id,AuditData)
+    1. Create a after trigger tr_tblEmpl_ForInsert , whenever a new record is inserted into tblEmpl a new data will be inserted into tblEmplAudit table as -> A new Employee with Id='' is added at 'currentDateTime'
+    2. Create a after trigger tr_tblEmpl_ForDelete , whenever a new record is deleted from tblEmpl a new data will be inserted into tblEmplAudit table as -> An existing Employee with Id='' is deleted at 'currentDateTime'
+    3. Create a after trigger tr_tblEmpl_ForUpdate , whenever a user details are updated a new record in tblEmplAudit will be inserted as -> Employee with id = '' changed name from Mike to Mikey Salary from oldSalary to newSalary
+
+Q37. Create two tables tblEmpl1 and tblDept1
+    Id  Name    Gender  DepartmentId        
+    1	John	Male	3
+    2	Mike	Male	2
+    3	Pam	    Female	1
+    4	Todd	Male	4
+    5	Sara	Female	1
+    6	Ben	    Male	3
+
+    Id  Name
+    1	IT
+    2	Payroll
+    3	HR
+    4	Admin
+
+    Now create a view to show the columns from both the tables like Id,Name,Gender,Department
+    1. With the help of instead of insert trigger try to insert a record in the view which internally update the underlying tblEmpl1 and tblDept1 tables.
+    2. With the help of instead of update trigger try to update the department , name and gender.
+    3. With the help of instead of delete trigger try to delete the employee from vwEmplDetails
+    
+Q38. 

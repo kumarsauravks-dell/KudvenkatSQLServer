@@ -198,3 +198,262 @@ end
 
 select * from fn_MSTVF_GetEmployees()
 ------------------------------------------
+Solution 32
+create table #PersonDetails(Id int,Name varchar(20),Gender varchar(10))
+
+insert into #PersonDetails values (1,'Kumar','Male')
+
+select * from #PersonDetails 
+
+select name from tempdb..sysobjects where name like '#PersonDetails%'
+-------------------------------------------
+Solution 33
+create proc spCreateLocalTempTable
+as
+begin 
+	create table #PersonDetails(Id int,Name varchar(20),Gender varchar(10))
+	insert into #PersonDetails values (1,'Kumar','Male')
+	insert into #PersonDetails values (2,'Kumari','Female')
+	select * from #PersonDetails
+end
+
+exec spCreateLocalTempTable
+--------------------------
+Solution 34
+select * from tblEmployee
+select * from tblDepartment
+
+create view vWEmployeeByDepartment
+as
+select e.Name,e.Gender,e.City,d.Name as Department
+from tblEmployee e join tblDepartment d
+on e.DepId=d.Id
+
+select * from vWEmployeeByDepartment
+sp_helptext vWEmployeeByDepartment
+-------------------------
+Solution 35
+create table tblProduct(
+Id int identity(1,1) primary key,
+Name varchar(20),
+UnitPrice int
+)
+
+insert into tblProduct values('Books',20)
+insert into tblProduct values('Pens',14)
+insert into tblProduct values('Pencils',11)
+insert into tblProduct values('Clips',10)
+
+select * from tblProduct
+
+create table tblProductSales(
+Id int identity(1,1) primary key,
+ProductId int,
+QuantitySold int
+)
+
+insert into tblProductSales values (1,10)
+insert into tblProductSales values (3,23)
+insert into tblProductSales values (4,21)
+insert into tblProductSales values (2,12)
+insert into tblProductSales values (1,13)
+insert into tblProductSales values (3,12)
+insert into tblProductSales values (4,13)
+insert into tblProductSales values (1,11)
+insert into tblProductSales values (2,12)
+insert into tblProductSales values (1,14)
+
+select * from tblProductSales
+
+create view vWTotalSalesByProduct
+with schemabinding
+as
+select Name,
+Sum(IsNull((QuantitySold*UnitPrice),0)) as TotalSales,
+Count_Big(*) as TotalTransactions
+from dbo.tblProductSales
+join dbo.tblProduct
+on dbo.tblProduct.Id=dbo.tblProductSales.ProductId
+group by Name
+
+select * from vWTotalSalesByProduct
+create unique clustered index UIX_vwTotalSalaryByProduct_Name on vWTotalSalesByProduct(Name)
+-------------------------------------------
+Solution 36
+
+1. 
+create table tblEmpl(Id int identity(1,1) primary key,Name varchar(20),Salary int , Gender varchar(10))
+create table tblEmplAudit(Id int identity(1,1),AuditData varchar(80))
+
+create trigger tr_tblEmpl_forInsert
+on tblEmpl
+for insert
+as
+begin 
+	declare @Id int
+	select @Id=Id from inserted
+
+	insert into tblEmplAudit
+	values ('A new Employee with Id = '+CAST(@Id as nvarchar(5))+
+	' is added on '+CAST(GETDATE() as nvarchar(20)))
+end
+
+select * from tblEmpl
+select * from tblEmplAudit
+
+insert into tblEmpl values('Sam',4000,'Male')
+insert into tblEmpl values('Suman',5000,'Female')
+------
+2.
+create trigger tr_tblEmpl_forDelete
+on tblEmpl
+for delete
+as
+begin 
+	declare @Id int
+	select @Id=Id from deleted
+
+	insert into tblEmplAudit
+	values ('An existing Employee with Id = '+CAST(@Id as nvarchar(5))+
+	' is deleted on '+CAST(GETDATE() as nvarchar(20)))
+end
+
+select * from tblEmpl
+select * from tblEmplAudit
+
+delete from tblEmpl where Name='Suman'
+-------
+3.
+create trigger tr_tblEmpl_ForUpdate
+on tblEmpl
+for Update
+as
+begin
+	declare @Id int
+	declare @OldName nvarchar(20),@NewName nvarchar(20)
+	declare @OldSalary int, @NewSalary int
+	declare @OldGender nvarchar(10),@NewGender nvarchar(10)
+
+	Declare @AuditString nvarchar(1000)
+
+	select * into #TempTable from inserted
+
+	while(Exists(select Id from #TempTable))
+	begin
+		set @AuditString=''
+		select top 1 @Id=Id,@NewName=Name,@NewGender=Gender,@NewSalary=Salary from #TempTable
+		select @OldName=Name,@OldGender=Gender,@OldSalary=Salary from deleted where Id=@Id
+
+		set @AuditString='Employee with Id = '+CAST(@Id as nvarchar(4))+' changed '
+		if(@OldName <> @NewName)
+			set @AuditString=@AuditString+' Name from '+@OldName+' to ' +@NewName
+		if(@OldGender <> @NewGender)
+			set @AuditString=@AuditString+' Gender from '+@OldGender+' to ' +@NewGender
+		if(@OldSalary <> @NewSalary)
+			set @AuditString=@AuditString+' Salary from '+CAST(@OldSalary as nvarchar(10))+' to ' +CAST(@NewSalary as nvarchar(10))
+
+		insert into tblEmplAudit values(@AuditString)
+		delete from #TempTable
+	end
+end
+
+update tblEmpl set Name='Saurav',Gender='Male',Salary=2000
+-------------------------------------------------------
+Solution 37
+1.
+create table tblEmpl1(Id int primary key,Name varchar(20),Gender varchar(10),DepartmentId int)
+create table tblDept1(Id int,Name varchar(20))
+
+select * from tblEmpl1
+select * from tblDept1
+
+insert into tblEmpl1 values(1,'John','Male',3)
+insert into tblEmpl1 values(2,'Mike','Male',2)
+insert into tblEmpl1 values(3,'Pam','Female',1)
+insert into tblEmpl1 values(4,'Todd','Male',4)
+insert into tblEmpl1 values(5,'Sara','Female',1)
+insert into tblEmpl1 values(6,'Ben','Male',3)
+
+insert into tblDept1 values(1,'IT')
+insert into tblDept1 values(2,'Payroll')
+insert into tblDept1 values(3,'HR')
+insert into tblDept1 values(4,'Admin')
+
+create view vwEmplDetails
+as
+select e.Id,e.Name,Gender,d.Name as Depatment from tblEmpl1 e join tblDept1 d
+on e.DepartmentId=d.Id 
+
+select * from vwEmplDetails
+
+create trigger tr_vwEmplDetails_InsteadOfInsert
+on vwEmplDetails
+instead of insert
+as
+begin
+	declare @DeptId int
+	select @DeptId=d.Id from tblDept1 d join inserted i on i.Depatment=d.Name
+	if(@DeptId is null)
+	begin
+		raiserror('Invalid Department Name, Statement terminated',16,1)
+		return
+	end
+	insert into tblEmpl1(Id,Name,Gender,DepartmentId)
+	Select Id,Name,Gender,@DeptId from inserted
+end
+
+insert into vwEmplDetails values(7,'Valarie','Female','IT')
+---
+2.
+create trigger tr_vwEmplDetails_InsteadOfUpdate
+on vwEmplDetails
+instead of update
+as
+begin
+	-- if empId is updated
+	if(update(Id))
+	begin
+		raiserror('Id cannot be changed',16,1)
+		return
+	end
+	--if DepName is updated
+	if(UPDATE(Depatment))
+	begin
+		declare @DeptId int
+		select @DeptId=d.Id from tblDept1 d join inserted i on i.Depatment=d.Name
+		if(@DeptId is null)
+		begin
+			raiserror('Invalid Department Name',16,1)
+			return
+		end
+		update tblEmpl1 set DepartmentId=@DeptId from inserted join tblEmpl1 on tblEmpl1.Id=inserted.Id
+	end
+	-- if gender is updated
+	if(UPDATE(Gender))
+	begin
+		Update tblEmpl1 set Gender=inserted.Gender from inserted join tblEmpl1 on tblEmpl1.Id=inserted.Id
+	end
+	-- if Name is updated
+	if(Update(Name))
+	begin
+		update tblEmpl1 set Name=inserted.Name from inserted join tblEmpl1 on tblEmpl1.Id=inserted.Id
+	end
+end
+
+update vwEmplDetails set Depatment='IT' where Id=1
+update vwEmplDetails set Name='Johny',Gender='Female' ,Depatment='Payroll' where Id=1
+----
+3.
+create trigger tr_vwEmplDetails_InsteadOfDelete
+on vwEmplDetails
+instead of delete
+as
+begin
+	delete tblEmpl1 from tblEmpl1 join deleted on tblEmpl1.Id=deleted.Id
+	--subquery
+	--delete from tblEmpl1 where Id in (Select Id from deleted)
+end
+delete from vwEmplDetails where Id=7
+delete from vwEmplDetails where Id IN (1,2)
+
+----------------------------------------------------------------------

@@ -144,4 +144,51 @@
     - Encrypting Functions
     - Schema binding functions
 
-#34.
+#34. Temporary Tables 
+    - What are Temporary Tables?
+    - Types of Temporary tables - Local & Global
+    - Difference b/n local and global temp tables.
+
+#35. Indexes
+    - What are Indexes
+    - Why do we use Indexes
+    - Advantages of Indexes
+
+#36. Clustered and non clustered Indexes
+    - Different types of indexes in Sql Server
+    - What are clustered indexes
+    - What are NonClustered indexes
+    - Difference b/n Clustered and NonClustered Indexes
+
+#37. Unique & Non-Unique Indexes
+    - What is Unique Index
+    - Difference b/n unique index and unique constraint
+
+#38. Advantages and Disadvantages of Indexes
+    - Advantages and Disadvantages of indexes
+    - Types of queries that can benifit from indexes
+    - Covering Queries 
+    
+#39. Views in Sql
+    - What is view
+    - Advantages of using views
+
+#40. Updatable Views
+
+#41. Indexed Views
+
+#42. Views Limitations
+
+#43. DML Triggers
+    - Different types of triggers
+
+#44. DML Triggers contd.
+    - After Update Triggers
+
+#45. Instead of Insert Trigger
+
+#46. Instead of Update Trigger
+
+#47. Instead of Delete trigger
+
+
